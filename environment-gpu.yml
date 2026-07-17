@@ -1,0 +1,17 @@
+name: xenium-gpu
+channels:
+  - rapidsai
+  - conda-forge
+  - nvidia
+dependencies:
+  - python=3.11
+  - pip
+  - setuptools
+  - anndata
+  - scanpy
+  - rapids-singlecell
+  - cupy
+  - rmm
+  - numpy
+  - pandas
+  - matplotlib

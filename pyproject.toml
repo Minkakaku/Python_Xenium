@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xenium-workflow"
+version = "0.1.0"
+description = "Reusable Xenium spatial transcriptomics analysis workflow"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["cluster_gpu"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["xenium_workflow*"]
