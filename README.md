@@ -1,4 +1,4 @@
-# Xenium 空间转录组分析模板
+# Python-xenium-workflow-template
 
 这是从原始 Xenium 分析 notebook 中整理出的可复用项目模板。原始代码完整保存在 `legacy/original/`；`src/` 尽量沿用原函数名称和分析逻辑，只修复明确错误、项目硬编码及会影响统计结论的问题。
 
@@ -84,3 +84,7 @@ python -m workflow.step04_cluster_gpu
 - Linux 服务器路径、项目编号、客户信息和 `cp -r` 报告模板不进入通用代码。
 
 详细审查记录见 [原代码审查](docs/original_code_review_CN.md)。
+
+## 其他人员来源代码
+
+`source_catalog/` 收录 547 份空间/Xenium Python 与 Shell 语义副本，`SOURCE_CATALOG.tsv` 记录空间场景、owner 和哈希。正式 Xenium 项目继续优先使用本模板脚本；来源目录用于补充分割、邻域、空间统计和平台运行方法。
