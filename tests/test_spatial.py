@@ -7,7 +7,9 @@ import pandas as pd
 from xenium_workflow.spatial import nearest_neighbor_table, proximity_sample_summary
 
 
+# 使用小型合成对象验证空间邻居不会跨样本连接。
 class SpatialIsolationTests(unittest.TestCase):
+    # 功能：构造两个样本及其空间坐标，测试样本间空间隔离。
     def setUp(self):
         obs = pd.DataFrame(
             {
@@ -22,6 +24,7 @@ class SpatialIsolationTests(unittest.TestCase):
             [[0.0, 0.0], [1.0, 0.0], [0.0, 0.0], [100.0, 0.0]]
         )
 
+    # 功能：验证最近邻仅在同一样本内寻找。
     def test_nearest_neighbors_do_not_cross_samples(self):
         table = nearest_neighbor_table(self.adata)
         self.assertEqual(len(table), 4)
@@ -29,6 +32,7 @@ class SpatialIsolationTests(unittest.TestCase):
         self.assertTrue((table.loc[table["sample"] == "CON_1", "group"] == "CON").all())
         self.assertTrue((table.loc[table["sample"] == "EXP_1", "group"] == "EXP").all())
 
+    # 功能：验证邻近统计按样本建图，并保留零计数组合。
     def test_proximity_uses_sample_level_graphs_and_zero_counts(self):
         radius, annulus = proximity_sample_summary(
             self.adata,

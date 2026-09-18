@@ -8,10 +8,12 @@ from pathlib import Path
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "16")
 
 
+# 功能：把聚类 resolution 转换为统一的 metadata 列名（定义：resolution_key）。
 def resolution_key(value):
     return f"res_{value:g}"
 
 
+# 功能：使用 RAPIDS 在 GPU 上完成邻接图、Leiden 聚类和 UMAP（定义：run_gpu_clustering）。
 def run_gpu_clustering(
     input_path,
     output_path,
@@ -76,6 +78,7 @@ def run_gpu_clustering(
     return adata
 
 
+# 功能：解析独立 GPU 聚类入口的命令行参数（定义：parse_args）。
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", required=True, help="QC-filtered input h5ad")

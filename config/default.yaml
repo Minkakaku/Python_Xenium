@@ -1,0 +1,19 @@
+# 公共分析默认值；项目在 projects/<项目>/config/config.yaml 覆盖差异项。
+cluster_resolutions: [0.3, 0.6, 0.8, 1.0]
+gpu_device: 0
+resolution_key: res_0.3
+
+xenium_jobs: 6
+load_workers: 1
+apply_roi: false
+
+qc_min_gene_quantile: 0.05
+qc_max_gene_quantile: 0.995
+qc_min_complexity: 0.80
+qc_max_complexity: 0.99
+
+run_go: true
+cn_neighbors: 10
+cn_clusters: [10, 15]
+proximity_radius: 50
+proximity_bins: [0, 50, 100, 150, 200]

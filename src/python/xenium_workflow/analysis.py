@@ -8,11 +8,13 @@ from matplotlib.pyplot import rc_context
 from .runtime import group_palette, save_figure
 
 
+# 提取全体细胞的 UMAP 范围，供分组面板共用。
 def _umap_limits(adata):
     coords = adata.obsm["X_umap"]
     return (coords[:, 0].min(), coords[:, 0].max()), (coords[:, 1].min(), coords[:, 1].max())
 
 
+# 给一个或多个 UMAP 面板设置统一范围及等比例坐标。
 def _fix_umap_axes(axes, xlim, ylim):
     for ax in np.atleast_1d(axes).ravel():
         ax.set_xlim(xlim)
@@ -20,6 +22,7 @@ def _fix_umap_axes(axes, xlim, ylim):
         ax.set_aspect("equal")
 
 
+# 功能：绘制并整理 降维聚类与 marker 分析结果（定义：cluster_plot）。
 def cluster_plot(adata, res, out_dir, group_colors=None):
     import scanpy as sc
     import squidpy as sq
@@ -104,6 +107,7 @@ def cluster_plot(adata, res, out_dir, group_colors=None):
     return adata
 
 
+# 基于 raw 表达检验 cluster marker，输出显著正向基因并可附加 GO 富集。
 def marker_gene(adata, res, organism, out_dir, run_go=True, method="t-test"):
     import scanpy as sc
 
@@ -154,6 +158,7 @@ def marker_gene(adata, res, organism, out_dir, run_go=True, method="t-test"):
     return adata
 
 
+# 调用 Enrichr 的 GO 2023 基因集，输出 BP/CC/MF 富集表及配对柱图。
 def _go_enrichment(gene_list, organism, out_dir):
     import gseapy as gp
 
@@ -207,6 +212,7 @@ def _go_enrichment(gene_list, organism, out_dir):
     )
 
 
+# 检查 cluster 映射完整性后写入细胞类型，输出 UMAP、空间图和样本组成。
 def celltype_anno(adata, res, anno_dict, out_dir, group_colors=None):
     import scanpy as sc
     import squidpy as sq

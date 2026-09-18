@@ -16,13 +16,21 @@ REPORT_STEPS = (
 )
 
 
+# 功能：构建 运行与输出 所需对象或目录（定义：prepare_project_dirs）。
 def prepare_project_dirs(project):
-    project.PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    project.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    for path in (
+        project.RAW_DIR,
+        project.PROCESSED_DIR,
+        project.REFERENCE_DIR,
+        project.RESULTS_DIR,
+        project.LOGS_DIR,
+    ):
+        path.mkdir(parents=True, exist_ok=True)
     for name in REPORT_STEPS:
         (project.RESULTS_DIR / name).mkdir(parents=True, exist_ok=True)
 
 
+# 功能：保存 运行与输出 产生的对象、表格或图形（定义：save_figure）。
 def save_figure(path_no_ext, fig=None, dpi=300, close=True):
     path_no_ext = Path(path_no_ext)
     path_no_ext.parent.mkdir(parents=True, exist_ok=True)
@@ -33,6 +41,7 @@ def save_figure(path_no_ext, fig=None, dpi=300, close=True):
         plt.close(fig)
 
 
+# 功能：为 CON、EXP 及其他分组生成稳定配色（定义：group_palette）。
 def group_palette(groups, configured=None):
     configured = configured or {}
     fallback = plt.get_cmap("tab10")

@@ -6,6 +6,7 @@ import pandas as pd
 from .runtime import save_figure
 
 
+# 功能：计算并汇总 质量控制 指标（定义：add_qc_metrics）。
 def add_qc_metrics(adata):
     import scanpy as sc
 
@@ -22,6 +23,7 @@ def add_qc_metrics(adata):
     return adata
 
 
+# 功能：绘制并整理 质量控制 分析结果（定义：_plot_qc_panel）。
 def _plot_qc_panel(adata, out_dir, prefix):
     import matplotlib.pyplot as plt
     import scanpy as sc
@@ -65,6 +67,7 @@ def _plot_qc_panel(adata, out_dir, prefix):
     save_figure(Path(out_dir) / f"{prefix}_nCount_nFeature_scatter", fig)
 
 
+# 计算原始细胞 QC 指标，输出全体及逐样本的图形和指标表。
 def data_qc(adata, out_dir):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -81,6 +84,7 @@ def data_qc(adata, out_dir):
     return adata
 
 
+# 功能：筛选 质量控制 使用的数据（定义：filter_parameter_record）。
 def filter_parameter_record(
     adata,
     output_file,
@@ -104,6 +108,7 @@ def filter_parameter_record(
     pd.DataFrame(rows).to_csv(output_file, sep="\t", index=False)
 
 
+# 按阈值表逐样本筛选基因数和复杂度，合并保留细胞并保存过滤后 QC。
 def cell_filter(adata_qc, para_file, out_dir):
     import anndata
 

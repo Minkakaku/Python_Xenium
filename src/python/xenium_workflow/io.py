@@ -4,10 +4,12 @@ from pathlib import Path
 import pandas as pd
 
 
+# 功能：读取或提取 数据读取与样本合并 所需数据（定义：read_sample_info）。
 def read_sample_info(path):
     return pd.read_csv(path, sep="\t", dtype=str).fillna("")
 
 
+# 读取一个 Xenium FOV 的表达表，添加分组并以 fov:cell_id 构造细胞索引。
 def _read_xenium_record(record, data_dir, xenium_jobs, table_key):
     from spatialdata_io import xenium
 
@@ -27,6 +29,7 @@ def _read_xenium_record(record, data_dir, xenium_jobs, table_key):
     return table
 
 
+# 解析样本表中的 ROI 文件与样本对应关系，合并 ROI 细胞编号及分组。
 def _read_roi_map(sample_info, roi_dir):
     rows = []
     for record in sample_info.itertuples(index=False):
@@ -48,6 +51,7 @@ def _read_roi_map(sample_info, roi_dir):
     return pd.concat(rows, ignore_index=True) if rows else None
 
 
+# 在配置多 ROI 的 FOV 中保留所选细胞，并回填对应的样本和分组。
 def _apply_roi_assignments(adata, sample_info, roi_dir):
     roi_map = _read_roi_map(sample_info, roi_dir)
     if roi_map is None:
@@ -67,6 +71,7 @@ def _apply_roi_assignments(adata, sample_info, roi_dir):
     return adata
 
 
+# 功能：读取或提取 数据读取与样本合并 所需数据（定义：load_xenium_data）。
 def load_xenium_data(
     data_dir,
     sample_info,
@@ -81,6 +86,7 @@ def load_xenium_data(
     info = read_sample_info(sample_info)
     records = list(info.itertuples(index=False))
 
+    # 功能：读取或提取 数据读取与样本合并 所需数据（定义：read_one）。
     def read_one(record):
         return _read_xenium_record(record, data_dir, xenium_jobs, table_key)
 

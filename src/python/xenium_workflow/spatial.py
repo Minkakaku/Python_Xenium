@@ -9,16 +9,19 @@ from scipy.stats import mannwhitneyu
 from .runtime import group_palette, save_figure
 
 
+# 返回细胞类型的稳定顺序，分类列使用既有类别顺序。
 def _categories(values):
     if isinstance(values.dtype, pd.CategoricalDtype):
         return [str(x) for x in values.cat.categories]
     return sorted(pd.unique(values.astype(str)).tolist())
 
 
+# 功能：计算并汇总 空间统计与邻域 指标（定义：_sample_group_table）。
 def _sample_group_table(adata, sample_col="sample", group_col="group"):
     return adata.obs[[sample_col, group_col]].drop_duplicates(sample_col).set_index(sample_col)
 
 
+# 将原始 P 值转换为图中的显著性符号；缺失值显示 NA。
 def _p_label(p):
     if pd.isna(p):
         return "NA"
@@ -29,6 +32,7 @@ def _p_label(p):
     return "ns"
 
 
+# 对传入的样本汇总值做两组 Mann–Whitney U 检验，返回未校正 P 值。
 def _two_group_tests(table, value_col, key_cols, group_col="group"):
     groups = table[group_col].drop_duplicates().tolist()
     rows = []
@@ -51,6 +55,7 @@ def _two_group_tests(table, value_col, key_cols, group_col="group"):
     return pd.DataFrame(rows)
 
 
+# 逐样本建立空间图并计算细胞类型中心性，保存样本层面的表和组别展示。
 def spatial_statistics(adata, out_dir, cluster_key="celltype", group_colors=None):
     import seaborn as sns
     import squidpy as sq
@@ -90,6 +95,7 @@ def spatial_statistics(adata, out_dir, cluster_key="celltype", group_colors=None
     return scores
 
 
+# 在各样本内部查询 k 个邻居，计算每个细胞邻域内各类型的比例。
 def _knn_composition(adata, column, k=10, sample_col="sample"):
     categories = _categories(adata.obs[column])
     frames = []
@@ -98,6 +104,7 @@ def _knn_composition(adata, column, k=10, sample_col="sample"):
         coords = np.asarray(tmp.obsm["spatial"])
         if len(coords) < 2:
             continue
+        # 多查询一个位置以去掉自身；小样本以实际细胞数限制邻居数。
         n_neighbors = min(k + 1, len(coords))
         indices = cKDTree(coords).query(coords, k=n_neighbors)[1]
         if indices.ndim == 1:
@@ -111,6 +118,7 @@ def _knn_composition(adata, column, k=10, sample_col="sample"):
     return pd.concat(frames), categories
 
 
+# 聚类局部邻域组成得到 CN，输出类型富集、样本内 CN 比例及空间图。
 def cell_neighbors(
     adata,
     column,
@@ -138,6 +146,7 @@ def cell_neighbors(
     )
     centers = pd.DataFrame(model.cluster_centers_, columns=categories, index=[f"CN{x}" for x in range(n_clusters)])
     tissue = pd.get_dummies(adata.obs[column].astype(str)).reindex(columns=categories, fill_value=0).mean()
+    # 用全对象的细胞类型比例作背景；伪计数避免零比例导致无穷值。
     fold_change = np.log2((centers + 1e-6).div(tissue + 1e-6, axis=1))
     fold_change.to_csv(out_dir / f"CNs_{n_clusters}_log2_enrichment.tsv", sep="\t")
     grid = sns.clustermap(fold_change, vmin=-2, vmax=2, cmap="coolwarm", row_cluster=False, linewidths=0)
@@ -171,6 +180,7 @@ def cell_neighbors(
     return adata
 
 
+# 功能：把细胞级邻近结果汇总到样本层面（定义：proximity_sample_summary）。
 def proximity_sample_summary(
     adata,
     radius=50,
@@ -243,6 +253,7 @@ def proximity_sample_summary(
     return pd.DataFrame(radius_rows), pd.DataFrame(annulus_rows)
 
 
+# 汇总指定半径和环带内的邻近关系，在样本层面比较两组并绘图。
 def proximity_analysis(
     adata,
     out_dir,
@@ -301,6 +312,7 @@ def proximity_analysis(
     return radius_table, annulus_table, tests
 
 
+# 在样本内寻找每个细胞的最近一个邻居，记录其类型和距离。
 def nearest_neighbor_table(adata):
     rows = []
     for sample in adata.obs["sample"].drop_duplicates():
@@ -325,6 +337,7 @@ def nearest_neighbor_table(adata):
     return pd.DataFrame(rows)
 
 
+# 功能：绘制并整理 空间统计与邻域 分析结果（定义：nearest_neighbor_boxplot）。
 def nearest_neighbor_boxplot(summary, tests, out_dir, group_colors=None):
     import seaborn as sns
 
@@ -357,6 +370,7 @@ def nearest_neighbor_boxplot(summary, tests, out_dir, group_colors=None):
         save_figure(source_dir / "nearest_neighbor_distance_by_group", fig)
 
 
+# 按样本及来源/邻居类型汇总最近邻距离中位数，再做组间检验和展示。
 def nearest_neighbor(adata, out_dir, group_colors=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

@@ -1,10 +1,23 @@
-data/*
-!data/.gitkeep
-results/*
-!results/.gitkeep
-logs/*
-!logs/.gitkeep
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+.ipynb_checkpoints/
+.Rhistory
+.RData
+.DS_Store
 
+projects/*/data/raw/*
+!projects/*/data/raw/.gitkeep
+projects/*/data/processed/*
+!projects/*/data/processed/.gitkeep
+projects/*/data/reference/*
+!projects/*/data/reference/.gitkeep
+projects/*/results/*
+!projects/*/results/.gitkeep
+projects/*/logs/*
+!projects/*/logs/.gitkeep
 
 *.h5ad
 *.zarr/
@@ -13,12 +26,3 @@ logs/*
 *.tif
 *.tiff
 *.zip
-
-__pycache__/
-*.py[cod]
-.ipynb_checkpoints/
-.venv/
-.pytest_cache/
-.Rhistory
-.RData
-.DS_Store
