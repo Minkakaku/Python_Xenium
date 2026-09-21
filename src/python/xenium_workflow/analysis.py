@@ -3,9 +3,17 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.pyplot import rc_context
 
-from .runtime import group_palette, save_figure
+from .runtime import (
+    NPG_SEQUENTIAL,
+    categorical_palette,
+    group_palette,
+    save_figure,
+    set_adata_palette,
+    style_dotplot,
+)
 
 
 # 提取全体细胞的 UMAP 范围，供分组面板共用。
@@ -30,6 +38,7 @@ def cluster_plot(adata, res, out_dir, group_colors=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     xlim, ylim = _umap_limits(adata)
+    set_adata_palette(adata, res)
 
     with rc_context({"figure.figsize": (6, 6)}):
         sc.pl.umap(
@@ -88,9 +97,7 @@ def cluster_plot(adata, res, out_dir, group_colors=None):
     ).to_csv(out_dir / "data_umap.tsv", sep="\t")
 
     proportions = pd.crosstab(adata.obs["sample"], adata.obs[res], normalize="index")
-    color_key = f"{res}_colors"
-    colors = adata.uns.get(color_key, plt.get_cmap("tab20").colors)
-    palette = dict(zip(proportions.columns, colors))
+    palette = categorical_palette(proportions.columns)
     ax = proportions.plot(
         kind="bar",
         stacked=True,
@@ -125,10 +132,12 @@ def marker_gene(adata, res, organism, out_dir, run_go=True, method="t-test"):
         groupby=res,
         standard_scale="var",
         n_genes=5,
-        cmap="bwr",
+        cmap=LinearSegmentedColormap.from_list("npg_dotplot", NPG_SEQUENTIAL),
+        smallest_dot=18,
         show=False,
     )
-    save_figure(out_dir / "dotplot_top5_marker_gene", dpi=300)
+    style_dotplot()
+    save_figure(out_dir / "dotplot_top5_marker_gene")
 
     all_markers = []
     for cluster in adata.obs[res].cat.categories:
@@ -226,6 +235,7 @@ def celltype_anno(adata, res, anno_dict, out_dir, group_colors=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     xlim, ylim = _umap_limits(adata)
+    set_adata_palette(adata, "celltype")
     with rc_context({"figure.figsize": (6, 6)}):
         sc.pl.umap(
             adata,
@@ -272,8 +282,7 @@ def celltype_anno(adata, res, anno_dict, out_dir, group_colors=None):
 
     adata.obs.to_csv(out_dir / "all_cell_features_celltype.tsv", sep="\t")
     proportions = pd.crosstab(adata.obs["sample"], adata.obs["celltype"], normalize="index")
-    colors = adata.uns.get("celltype_colors", plt.get_cmap("tab20").colors)
-    palette = dict(zip(proportions.columns, colors))
+    palette = categorical_palette(proportions.columns)
     ax = proportions.plot(
         kind="bar",
         stacked=True,

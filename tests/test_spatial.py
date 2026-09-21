@@ -4,6 +4,7 @@ import anndata as ad
 import numpy as np
 import pandas as pd
 
+from xenium_workflow.runtime import NPG_COLORS, categorical_palette
 from xenium_workflow.spatial import nearest_neighbor_table, proximity_sample_summary
 
 
@@ -48,6 +49,13 @@ class SpatialIsolationTests(unittest.TestCase):
         self.assertEqual(con_value, 1.0)
         self.assertEqual(exp_value, 0.0)
         self.assertFalse(annulus.empty)
+
+    # 功能：验证正式分类图使用固定 NPG 顺序并支持超过十类。
+    def test_npg_palette_order_and_extension(self):
+        labels = [f"C{x}" for x in range(12)]
+        palette = categorical_palette(labels)
+        self.assertEqual([palette[x] for x in labels[:10]], list(NPG_COLORS))
+        self.assertEqual(len(set(palette.values())), 12)
 
 
 if __name__ == "__main__":

@@ -6,7 +6,9 @@ import pandas as pd
 from scipy.spatial import cKDTree
 from scipy.stats import mannwhitneyu
 
-from .runtime import group_palette, save_figure
+from matplotlib.colors import LinearSegmentedColormap
+
+from .runtime import NPG_DIVERGING, group_palette, save_figure, set_adata_palette
 
 
 # 返回细胞类型的稳定顺序，分类列使用既有类别顺序。
@@ -139,6 +141,7 @@ def cell_neighbors(
     label_col = f"CNs_{n_clusters}"
     label_values = pd.Series([f"CN{x}" for x in labels], index=composition.index)
     adata.obs[label_col] = pd.Categorical(label_values.reindex(adata.obs_names))
+    set_adata_palette(adata, label_col)
 
     composition.assign(**{label_col: label_values}).to_csv(
         out_dir / f"CNs_{n_clusters}_neighbor_composition.tsv",
@@ -149,7 +152,14 @@ def cell_neighbors(
     # 用全对象的细胞类型比例作背景；伪计数避免零比例导致无穷值。
     fold_change = np.log2((centers + 1e-6).div(tissue + 1e-6, axis=1))
     fold_change.to_csv(out_dir / f"CNs_{n_clusters}_log2_enrichment.tsv", sep="\t")
-    grid = sns.clustermap(fold_change, vmin=-2, vmax=2, cmap="coolwarm", row_cluster=False, linewidths=0)
+    grid = sns.clustermap(
+        fold_change,
+        vmin=-2,
+        vmax=2,
+        cmap=LinearSegmentedColormap.from_list("npg_diverging", NPG_DIVERGING),
+        row_cluster=False,
+        linewidths=0,
+    )
     save_figure(out_dir / f"CNs_{n_clusters}_log2_enrichment", grid.fig)
 
     sample_groups = _sample_group_table(adata).reset_index()
