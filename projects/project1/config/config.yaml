@@ -1,0 +1,4 @@
+# project1 的同名参数会覆盖根目录公共配置。
+group_colors:
+  CON: "#72b1b9"
+  EXP: "#f6ae00"
