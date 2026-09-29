@@ -1,0 +1,21 @@
+name: python-xenium
+channels:
+- conda-forge
+dependencies:
+- python=3.11
+- pip
+- setuptools
+- anndata
+- scanpy
+- squidpy
+- spatialdata
+- spatialdata-io
+- numpy
+- pandas
+- scipy
+- scikit-learn
+- matplotlib
+- seaborn
+- gseapy
+- openpyxl
+- pyyaml

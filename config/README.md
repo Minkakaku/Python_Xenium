@@ -1,16 +1,5 @@
-# config
+# 项目分层
 
-新项目开始时：
+公共方法在仓库 src/R 或 src/python；公共默认在根 config；项目参数与人工表格在 projects/<项目>/config；实际执行脚本在项目 workflow。编号步骤仅加载配置、调用共享方法与写日志。中间对象在项目 data/processed，结果在项目 results，环境在 envs。
 
-1. 复制 `sample_info.example.tsv` 为 `sample_info.tsv`；
-2. 修改 `project.py` 中的分组顺序、QC、聚类和空间分析参数；
-3. marker 完成后复制 `celltype_annotation.example.tsv` 为 `celltype_annotation.tsv`，填写真实生物学注释。
-
-`sample_info.tsv` 四列含义：
-
-- `raw`：`data/raw/` 下的 Xenium Ranger 输出目录名；
-- `fov`：视野名称；
-- `sample`：样本名；
-- `group`：实验分组。
-
-如果一个 FOV 通过 ROI 拆成多个样本，沿用原代码格式：`roi1.csv_sample1,roi2.csv_sample2`，并在 `config/ROI/` 放置对应 CSV，同时把 `project.py` 中 `APPLY_ROI` 设为 `True`。
+新项目复制 projects/project1，再按仓库 README 调整配置和运行。不要修改公共代码中的路径来适配项目。保留已经执行的步骤，重跑新增编号和输出目录。

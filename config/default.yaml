@@ -1,0 +1,32 @@
+organism: Human
+cluster_resolutions:
+- 0.3
+- 0.6
+- 0.8
+- 1.0
+gpu_device: 0
+resolution_key: res_0.3
+group_order:
+- CON
+- EXP
+group_colors:
+  CON: '#72b1b9'
+  EXP: '#f6ae00'
+xenium_jobs: 6
+load_workers: 1
+apply_roi: false
+qc_min_gene_quantile: 0.05
+qc_max_gene_quantile: 0.995
+qc_min_complexity: 0.8
+qc_max_complexity: 0.99
+cn_neighbors: 10
+cn_clusters:
+- 10
+- 15
+proximity_radius: 50
+proximity_bins:
+- 0
+- 50
+- 100
+- 150
+- 200
