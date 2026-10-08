@@ -7,6 +7,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.pyplot import rc_context
 
 from .runtime import (
+    NPG_COLORS,
     NPG_SEQUENTIAL,
     categorical_palette,
     group_palette,
@@ -205,7 +206,7 @@ def _go_enrichment(gene_list, organism, out_dir):
         top_term=5,
         figsize=(3, 5),
         title="GO Enrichment",
-        color=["darkgreen", "darkblue", "darkred"],
+        color=NPG_COLORS[:3],
         ofname=str(Path(out_dir) / "GO_enrichment.png"),
     )
     gp.barplot(
@@ -216,7 +217,7 @@ def _go_enrichment(gene_list, organism, out_dir):
         top_term=5,
         figsize=(3, 5),
         title="GO Enrichment",
-        color=["darkgreen", "darkblue", "darkred"],
+        color=NPG_COLORS[:3],
         ofname=str(Path(out_dir) / "GO_enrichment.pdf"),
     )
 
